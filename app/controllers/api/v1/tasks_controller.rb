@@ -12,7 +12,7 @@ module Api
 
       # GET /tasks/1
       def show
-        render json: @task
+        render json: @task, include: :project
       end
 
       # POST /tasks
