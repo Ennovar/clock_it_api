@@ -18,7 +18,7 @@ require 'rails_helper'
 # Message expectations are only used when there is no simpler way to specify
 # that an instance is receiving a specific message.
 
-RSpec.describe TasksController, type: :controller do
+RSpec.describe Api::V1::TasksController, type: :controller do
 
   # This should return the minimal set of attributes required to create a valid
   # Task. As you add validations to Task, be sure to
@@ -29,7 +29,7 @@ RSpec.describe TasksController, type: :controller do
 
   let(:invalid_attributes) {
     {
-      name: '',
+      name: ''
     }
   }
 
@@ -70,19 +70,14 @@ RSpec.describe TasksController, type: :controller do
 
       it "redirects to the created task" do
         post :create, params: {task: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(Task.last)
+        expect(response).to have_http_status(:created)
       end
     end
 
     context "with invalid params" do
-      it "assigns a newly created but unsaved task as @task" do
-        post :create, params: {task: invalid_attributes}, session: valid_session
-        expect(assigns(:task)).to be_a_new(Task)
-      end
-
-      it "re-renders the 'new' template" do
-        post :create, params: {task: invalid_attributes}, session: valid_session
-        expect(response).to render_template("new")
+      it "response to be unprocessable" do
+        post :create, params: { task: invalid_attributes }, session: valid_session
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
@@ -109,7 +104,7 @@ RSpec.describe TasksController, type: :controller do
       it "redirects to the task" do
         task = Task.create! valid_attributes
         put :update, params: {id: task.to_param, task: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(task)
+        expect(response).to have_http_status(:ok)
       end
     end
 
@@ -123,7 +118,7 @@ RSpec.describe TasksController, type: :controller do
       it "re-renders the 'edit' template" do
         task = Task.create! valid_attributes
         put :update, params: {id: task.to_param, task: invalid_attributes}, session: valid_session
-        expect(response).to render_template("edit")
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
@@ -139,7 +134,7 @@ RSpec.describe TasksController, type: :controller do
     it "redirects to the tasks list" do
       task = Task.create! valid_attributes
       delete :destroy, params: {id: task.to_param}, session: valid_session
-      expect(response).to redirect_to(tasks_url)
+      expect(response).to have_http_status(:no_content)
     end
   end
 

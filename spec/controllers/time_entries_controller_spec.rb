@@ -18,7 +18,7 @@ require 'rails_helper'
 # Message expectations are only used when there is no simpler way to specify
 # that an instance is receiving a specific message.
 
-RSpec.describe TimeEntriesController, type: :controller do
+RSpec.describe Api::V1::TimeEntriesController, type: :controller do
 
   # This should return the minimal set of attributes required to create a valid
   # TimeEntry. As you add validations to TimeEntry, be sure to
@@ -52,21 +52,6 @@ RSpec.describe TimeEntriesController, type: :controller do
     end
   end
 
-  describe "GET #new" do
-    it "assigns a new time_entry as @time_entry" do
-      get :new, params: {}, session: valid_session
-      expect(assigns(:time_entry)).to be_a_new(TimeEntry)
-    end
-  end
-
-  describe "GET #edit" do
-    it "assigns the requested time_entry as @time_entry" do
-      time_entry = TimeEntry.create! valid_attributes
-      get :edit, params: {id: time_entry.to_param}, session: valid_session
-      expect(assigns(:time_entry)).to eq(time_entry)
-    end
-  end
-
   describe "POST #create" do
     context "with valid params" do
       it "creates a new TimeEntry" do
@@ -83,7 +68,7 @@ RSpec.describe TimeEntriesController, type: :controller do
 
       it "redirects to the created time_entry" do
         post :create, params: {time_entry: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(TimeEntry.last)
+        expect(response).to have_http_status(:created)
       end
     end
 
@@ -122,7 +107,7 @@ RSpec.describe TimeEntriesController, type: :controller do
       it "redirects to the time_entry" do
         time_entry = TimeEntry.create! valid_attributes
         put :update, params: {id: time_entry.to_param, time_entry: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(time_entry)
+        expect(response).to have_http_status(:ok)
       end
     end
 
@@ -152,7 +137,7 @@ RSpec.describe TimeEntriesController, type: :controller do
     it "redirects to the time_entries list" do
       time_entry = TimeEntry.create! valid_attributes
       delete :destroy, params: {id: time_entry.to_param}, session: valid_session
-      expect(response).to redirect_to(time_entries_url)
+      expect(response).to have_http_status(:no_content)
     end
   end
 
