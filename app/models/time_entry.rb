@@ -6,4 +6,8 @@ class TimeEntry < ApplicationRecord
   def set_start_time
     self.start_time = Time.new
   end
+
+  def as_json(options = {})
+    super({ include: :task }.merge(options))
+  end
 end

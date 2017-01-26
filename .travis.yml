@@ -1,6 +1,26 @@
 language: ruby
-before_install:
-  - bundle install --jobs=3 --retry=3
-
+services:
+  - docker
+rvm:
+- 2.3.1
+before_script:
+  - bundle exec rake db:create
+  - bundle exec rake db:migrate
 script:
-  - bundle exec rake
+- bundle exec rake
+notifications:
+  slack:
+    secure: s+tHjmYeAejaHhFAuSxD3dtxgJEYHFEY8Q5gnmyGMtmzxZ2I0Dl8sxW/VVB3wygoj5hpdZou7qcikTZ4mMxiV0AcWiGKezZ78X57fAm7vbTi//ptMk2tZideq7VM/nHNCSqLJfCOhSurPj8UqJdRR4tDvbwCrWUxH6dlVUaAnzcMrhmNUuwaXmgWbg++D+vOeRlhyf63aiNIIBJg4ti6x51JiwZ8pEN8YOw9EEBFcaoCDlNGmhiwnCskalLIBYFmufUeA6CrtyKtqqOFbJRxl7fLU4awzvu2nIkfacbvdHl2PcaPNJxT9QPuh6Uq9MgbddWBZLh59m+avXxzQ0jRHKHL7zO/Kbdgmb4z9D7F9+Wg5MGHDJ9Xc02O9lernSIgO+3ckdSTEZx8h3Hcj44LG0BS6GvkcmtwWYgfEcsskoKzXME8b+xDnYSJRW8ce1eE/EvuyQJzcZqWiSWnyS5Nm/sBEmWbK9vfBaM/vW9j9V7vRkA2r9BC7fEZXgsl2vOlu5CrGjvzpF/hCT73Td2cZ68L9r7bRfzXJ7o/excQ+TXoNxV1eWFL38UUXLQ+rEzbNgTf5xYhIg8QMcZQjjgI3+Quj47/ljfXS6V0Ma4UFoKc5jp48ckub5O4vfTZ5r+r/eh+2QqQVCIw11cu0mGA0O7w6+yRGQR9pKwAOBy8J5k=
+after_success:
+  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+  - export REPO=ennovarplayerone/clock_it_api
+  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH
+    ; fi`
+  - docker build -f Dockerfile -t $REPO:$TRAVIS_COMMIT .
+  - docker tag $REPO:$TRAVIS_COMMIT $REPO:$TAG
+  - docker tag $REPO:$TRAVIS_COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
+  - docker push $REPO
+cache:
+  yarn: true
+  directories:
+  - node_modules

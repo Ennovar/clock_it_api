@@ -21,9 +21,9 @@ default: &default
   # For details on connection pooling, see rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: postgres
-  password:
-  host: db
+  user: <%= ENV.fetch("PROJECT_DATABASE_USER") { 'postgres' } %>
+  host: <%= ENV.fetch("PROJECT_DATABASE_HOST") { 'localhost' } %>
+  port: <%= ENV.fetch("PROJECT_DATABASE_PORT") { 5432 } %>
 
 development:
   <<: *default
@@ -75,5 +75,3 @@ test:
 production:
   <<: *default
   database: clock_it_production
-  username: clock_it
-  password: <%= ENV['CLOCK_IT_DATABASE_PASSWORD'] %>
